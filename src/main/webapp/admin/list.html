@@ -1,0 +1,293 @@
+<!DOCTYPE HTML>
+<!--
+	Hielo by TEMPLATED
+	templated.co @templatedco
+	Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+-->
+<html>
+	<head>
+		<title>Hielo by TEMPLATED</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" href="/assets/css/main.css" />
+		<link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css" />
+	</head>
+	
+	<script type="text/javascript">
+		let grid;
+
+		function load(){
+			drawGrid();
+		}
+
+		function drawGrid(){
+			grid = new tui.Grid({
+				el: document.querySelector('#grid'),
+				scrollX: true,
+				scrollY: true,
+				bodyHeight:400,
+				rowHeaders: [{type:'checkbox'}],
+				columns: [
+					{
+					header: '도서ID',
+					name: 'id',
+					width:'auto',
+					},
+					{
+					header: '도서명',
+					name: 'title',
+					width:'auto',
+					},
+					{
+					header: '저자',
+					name: 'author_names',
+					width:'auto',
+					},
+					{
+					header: '출판사',
+					name: 'publisher',
+					width:'auto',
+					},
+					{
+					header: '출판일',
+					name: 'publication_date',
+					width:'auto',
+					},
+					{
+					header: 'ISBN10',
+					name: 'isbn10',
+					width:'auto',
+					},
+					{
+					header: 'ISBN13',
+					name: 'isbn13',
+					width:'auto',
+					},
+				]
+				});
+
+			grid.on('dblclick', (ev)=>{
+				if(ev.rowKey != undefined){
+					let row = grid.getRow(ev.rowKey);
+					location.href = "/admin/detail.html?book_id="+row.id;
+				}
+			});
+		}
+
+		function loadGrid(data){
+			let gridData = new Array();
+			for(idx in data){
+				let rowData = data[idx].info;
+				let author_names = "";
+				for(aIdx in rowData.authors){
+					author_names += author_names.length>0?", "+rowData.authors[aIdx].name:rowData.authors[aIdx].name;
+				}
+				rowData.author_names = author_names;
+				gridData.push(rowData);
+			}
+			grid.resetData(gridData);
+		}
+
+		function ajaxRequest(url,inputs,callback){
+			
+			var reqJson = inputs;
+			/* 통신에 사용 될 XMLHttpRequest 객체 정의 */
+			httpRequest = new XMLHttpRequest();
+			httpRequest.onreadystatechange = () => {
+				/* readyState가 Done이고 응답 값이 200일 때, 받아온 response로 처리*/
+				if (httpRequest.readyState === XMLHttpRequest.DONE) {
+					if (httpRequest.status === 200) {
+						var result = httpRequest.response;
+						callback(result);
+					} else {
+						alert('request에 뭔가 문제가 있어요.');
+					}
+				}
+			};
+			
+			/* Post 방식으로 요청 */
+			httpRequest.open('POST', url, true);//경로 잡아줌
+			/* Response Type을 Json으로 사전 정의 */
+			httpRequest.responseType = "json";
+			/* 요청 Header에 컨텐츠 타입은 Json으로 사전 정의 */
+			httpRequest.setRequestHeader('Content-Type', 'application/json');
+			/* 정의된 서버에 Json 형식의 요청 Data를 포함하여 요청을 전송 */
+			httpRequest.send(JSON.stringify(reqJson));
+		}
+
+		function search(){
+			let param = {
+				title:document.querySelector("#title").value,
+				author:document.querySelector("#author").value,
+				publisher:document.querySelector("#publisher").value,
+				publication_date:document.querySelector("#publication_date").value,
+			}
+			ajaxRequest("/searchBookList",param,loadGrid);
+		}
+
+		function excelUploadAjax(){
+			var file = document.querySelector("#inputExcelFile");
+			var fileData = new FormData();
+			
+			fileData.append("uploadfile",file.files[0]);
+			
+			/* 통신에 사용 될 XMLHttpRequest 객체 정의 */
+			httpRequest = new XMLHttpRequest();
+			httpRequest.onreadystatechange = () => {
+				/* readyState가 Done이고 응답 값이 200일 때, 받아온 response로 처리*/
+				if (httpRequest.readyState === XMLHttpRequest.DONE) {
+					if (httpRequest.status === 200) {
+						alert("Uploaded");
+						search();
+					} else {
+						alert('request에 뭔가 문제가 있어요.');
+					}
+				}
+			};
+			
+			/* Post 방식으로 요청 */
+			httpRequest.open('POST', '/excelUpload', true);//경로 잡아줌
+			/* Response Type을 Json으로 사전 정의 */
+			httpRequest.responseType = "json";
+			/* 정의된 서버에 Json 형식의 요청 Data를 포함하여 요청을 전송 */
+			httpRequest.send(fileData);
+		}
+
+		function deleteBooks(){
+			ajaxRequest("/deleteBooks",grid.getCheckedRows(),search);
+		}
+
+		function indexBooks(){
+			ajaxRequest("/indexBooks",grid.getCheckedRows(),search);
+		}
+	</script>
+	<body class="subpage" onload="load()">
+
+		<!-- Header -->
+			<header id="header">
+				<div class="logo"><a href="/index.html">Hielo <span>by TEMPLATED</span></a></div>
+				<a href="#menu">Menu</a>
+			</header>
+
+		<!-- Nav -->
+			<nav id="menu">
+				<ul class="links">
+					<li><a href="/index.html">Home</a></li>
+					<li><a href="/generic.html">Generic</a></li>
+					<li><a href="/elements.html">Elements</a></li>
+				</ul>
+			</nav>
+
+		<!-- One -->
+			<section id="One" class="wrapper style3">
+				<div class="inner">
+					<header class="align-center">
+						<p>Eleifend vitae urna</p>
+						<h2>Generic Page Template</h2>
+					</header>
+				</div>
+			</section>
+
+		<!-- Two -->
+			<section id="two" class="wrapper style2">
+				<div class="inner">
+					<div class="box">
+						<div class="content">
+							<div class="row uniform">
+								<div class="12u" style="display: flex; justify-content: end;">
+									<ul class="actions">
+										<li><div class="button alt" onclick="search()">조회</div></li>
+									</ul>
+								</div>
+							</div>
+							<hr />
+							<div class="row uniform" style="display: flex; justify-content: center;">
+								<div class="10u">
+									<div class="row">
+										<div class="6u 12u$(medium)">
+											<div class="row uniform">
+												<div class="3u 12u$(xsmall)">
+													<h4>도서명 :</h4>
+												</div>
+												<div class="6u 12u$(xsmall)">
+													<input type="text" name="title" id="title" value="" placeholder="Name" />
+												</div>
+											</div>
+											<div class="row uniform">
+												<div class="3u 12u$(xsmall)">
+													<h4>출판사 :</h4>
+												</div>
+												<div class="6u 12u$(xsmall)">
+													<input type="text" name="publisher" id="publisher" value="" placeholder="Name" />
+												</div>
+											</div>
+										</div>
+										<div class="6u$ 12u$(medium)">
+											<div class="row uniform">
+												<div class="3u 12u$(xsmall)">
+													<h4>저자 :</h4>
+												</div>
+												<div class="6u 12u$(xsmall)">
+													<input type="text" name="author" id="author" value="" placeholder="Name" />
+												</div>
+											</div>
+											<div class="row uniform">
+												<div class="3u 12u$(xsmall)">
+													<h4>출판일 :</h4>
+												</div>
+												<div class="6u 12u$(xsmall)">
+													<input type="text" name="publication_date" id="publication_date" value="" placeholder="Name" />
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<hr />
+							<div class="row uniform">
+								<div class="12u" style="display: flex; justify-content: end;">
+									<ul class="actions">
+										<li><input type="file" id="inputExcelFile" name="inputExcelFile"/></li>
+										<li><div class="button alt" id="uploadBtn" onclick="excelUploadAjax()">EXCEL업로드</div></li>
+										<li><div class="button alt" id="indexBtn" onclick="indexBooks()">인덱싱</div></li>
+										<li><a href="./detail.html" class="button alt" id="newBtn"">등록</a></li>
+										<li><div class="button" id="deleteBtn" onclick="deleteBooks()">삭제</div></li>
+									</ul>
+								</div>
+							</div>
+							<div class="row uniform">
+								<div class="12u">
+									<div class="grid" id="grid"></div>
+								</div>
+							</div>	
+						</div>
+					</div>
+				</div>
+			</section>
+
+		<!-- Footer -->
+			<footer id="footer">
+				<div class="container">
+					<ul class="icons">
+						<li><a href="#" class="icon fa-twitter"><span class="label">Twitter</span></a></li>
+						<li><a href="#" class="icon fa-facebook"><span class="label">Facebook</span></a></li>
+						<li><a href="#" class="icon fa-instagram"><span class="label">Instagram</span></a></li>
+						<li><a href="#" class="icon fa-envelope-o"><span class="label">Email</span></a></li>
+					</ul>
+				</div>
+			</footer>
+
+		<div class="copyright">
+			Made with <a href="https://templated.co/">Templated</a>.
+		</div>
+
+		<!-- Scripts -->
+			<script src="/assets/js/jquery.min.js"></script>
+			<script src="/assets/js/jquery.scrollex.min.js"></script>
+			<script src="/assets/js/skel.min.js"></script>
+			<script src="/assets/js/util.js"></script>
+			<script src="/assets/js/main.js"></script>
+			<script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
+
+	</body>
+</html>

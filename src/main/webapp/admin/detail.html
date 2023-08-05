@@ -1,0 +1,283 @@
+<!DOCTYPE HTML>
+<!--
+	Hielo by TEMPLATED
+	templated.co @templatedco
+	Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+-->
+<html>
+	<head>
+		<title>Hielo by TEMPLATED</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" href="/assets/css/main.css" />
+	</head>
+	<script type="text/javascript">
+		function getParams(){
+			var url = window.location.search.replace('?','');
+			var params = {};
+			var urlArray = url.split('&');
+		
+			for(var i in urlArray)
+			{
+			  var param = urlArray[i].split('=');
+			  params[param[0]] = param[1]; 
+			}
+			return params;
+		}
+	
+		function load(){
+			let params = getParams()
+			if(params.book_id){
+				ajaxRequest("/bookInfo",params,print);
+			}
+		}
+	
+		function ajaxRequest(url,inputs,callback){
+			
+			var reqJson = inputs;
+			/* 통신에 사용 될 XMLHttpRequest 객체 정의 */
+			httpRequest = new XMLHttpRequest();
+			httpRequest.onreadystatechange = () => {
+				/* readyState가 Done이고 응답 값이 200일 때, 받아온 response로 처리*/
+				if (httpRequest.readyState === XMLHttpRequest.DONE) {
+					  if (httpRequest.status === 200) {
+						var result = httpRequest.response;
+						callback(result);
+					  } else {
+						alert('request에 뭔가 문제가 있어요.');
+					  }
+				}
+			};
+			
+			/* Post 방식으로 요청 */
+			httpRequest.open('POST', url, true);//경로 잡아줌
+			/* Response Type을 Json으로 사전 정의 */
+			httpRequest.responseType = "json";
+			/* 요청 Header에 컨텐츠 타입은 Json으로 사전 정의 */
+			httpRequest.setRequestHeader('Content-Type', 'application/json');
+			/* 정의된 서버에 Json 형식의 요청 Data를 포함하여 요청을 전송 */
+			httpRequest.send(JSON.stringify(reqJson));
+		}
+	
+		function print(result){
+			let thumbnail = document.querySelector("#thumbnail");
+			let title = document.querySelector("#title");
+			let id = document.querySelector("#id");
+			let publisher = document.querySelector("#publisher");
+			let isbn10 = document.querySelector("#isbn10");
+			let isbn13 = document.querySelector("#isbn13");
+			let publication_date = document.querySelector("#publication_date");
+			let contents = document.querySelector("#contents");
+			let author = document.querySelector("#author");
+			
+			thumbnail.src = result.info.thumbnail;
+			title.value = result.info.title;
+			id.value = result.info.id;
+			publisher.value = result.info.publisher;
+			isbn10.value = result.info.isbn10;
+			isbn13.value = result.info.isbn13;
+			publication_date.value = result.info.publication_date;
+			contents.value = result.info.contents;
+			author.value = result.info.authors[0].name;
+		}
+
+		function save(){
+			let id = document.querySelector("#id");
+			let title = document.querySelector("#title");
+			let publisher = document.querySelector("#publisher");
+			let isbn10 = document.querySelector("#isbn10");
+			let isbn13 = document.querySelector("#isbn13");
+			let publication_date = document.querySelector("#publication_date");
+			let contents = document.querySelector("#contents");
+			let author = document.querySelector("#author");
+
+			let param={
+				id:id.value,
+				title:title.value,
+				publisher:publisher.value,
+				isbn10:isbn10.value,
+				isbn13:isbn13.value,
+				publication_date:publication_date.value,
+				contents:contents.value,
+				author:[{name:author.value,seq:1,type:'A',book_id:id.value}]
+			}
+
+			ajaxRequest("/saveBookInfo",param,reload);
+		}
+
+		function reload(result){
+			ajaxRequest("/bookInfo",{book_id:result.id},print)
+		}
+	</script>
+	<body class="subpage" onload="load()">
+
+		<!-- Header -->
+			<header id="header">
+				<div class="logo"><a href="/index.html">Hielo <span>by TEMPLATED</span></a></div>
+				<a href="#menu">Menu</a>
+			</header>
+
+		<!-- Nav -->
+			<nav id="menu">
+				<ul class="links">
+					<li><a href="/index.html">Home</a></li>
+					<li><a href="/generic.html">Generic</a></li>
+					<li><a href="/elements.html">Elements</a></li>
+				</ul>
+			</nav>
+
+		<!-- One -->
+			<section id="One" class="wrapper style3">
+				<div class="inner">
+					<header class="align-center">
+						<p>Eleifend vitae urna</p>
+						<h2>Generic Page Template</h2>
+					</header>
+				</div>
+			</section>
+
+		<!-- Two -->
+			<section id="two" class="wrapper style2">
+				<div class="inner">
+					<div class="box">
+						<div class="content">
+							<div class="box">
+								<div class="12u" style="display: flex; justify-content: end;">
+									<ul class="actions">
+										<li><div class="button alt" onclick="save()">저장</div></li>
+										<li><a href="./list.html" class="button alt">목록</a></li>
+									</ul>
+								</div>
+							<div class="row">
+								<div class="3u 12u$(medium)">
+									<span class="image right"><img id="thumbnail" src="/images/pic02.jpg" alt="" /></span>
+								</div>
+								<div class="9u$ 12u$(medium)">
+									<div class="row uniform">
+										<div class="8u 12u$(small)">
+											<div class="row">
+												<div class="2u 12u$(xsmall)">
+													<h4>도서ID :</h4>
+												</div>
+												<div class="10u 12u$(xsmall)">
+													<input type="text" name="id" id="id" value="" placeholder="Name" readonly/>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="row uniform">
+										<div class="8u 12u$(small)">
+											<div class="row">
+												<div class="2u 12u$(xsmall)">
+													<h4>도서명 :</h4>
+												</div>
+												<div class="10u 12u$(xsmall)">
+													<input type="text" name="title" id="title" value="" placeholder="Name" />
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="row uniform">
+										<div class="8u 12u$(small)">
+											<div class="row">
+												<div class="2u 12u$(xsmall)">
+													<h4>저자 :</h4>
+												</div>
+												<div class="10u 12u$(xsmall)">
+													<input type="text" name="author" id="author" value="" placeholder="Name" />
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="row uniform">
+										<div class="8u 12u$(small)">
+											<div class="row">
+												<div class="2u 12u$(xsmall)">
+													<h4>출판사 :</h4>
+												</div>
+												<div class="10u 12u$(xsmall)">
+													<input type="text" name="publisher" id="publisher" value="" placeholder="Name" />
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="row uniform">
+										<div class="8u 12u$(small)">
+											<div class="row">
+												<div class="2u 12u$(xsmall)">
+													<h4>ISBN10 :</h4>
+												</div>
+												<div class="10u 12u$(xsmall)">
+													<input type="text" name="isbn10" id="isbn10" value="" placeholder="Name" />
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="row uniform">
+										<div class="8u 12u$(small)">
+											<div class="row">
+												<div class="2u 12u$(xsmall)">
+													<h4>ISBN13 :</h4>
+												</div>
+												<div class="10u 12u$(xsmall)">
+													<input type="text" name="isbn13" id="isbn13" value="" placeholder="Name" />
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="row uniform">
+										<div class="8u 12u$(small)">
+											<div class="row">
+												<div class="2u 12u$(xsmall)">
+													<h4>출판일 :</h4>
+												</div>
+												<div class="10u 12u$(xsmall)">
+													<input type="text" name="publication_date" id="publication_date" value="" placeholder="Name" />
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="row uniform">
+										<div class="8u 12u$(small)">
+											<div class="row">
+												<div class="2u 12u$(xsmall)">
+													<h4>소개 :</h4>
+												</div>
+												<div class="10u 12u$(xsmall)">
+													<textarea name="contents" id="contents" placeholder="Enter your message" rows="8"></textarea>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+
+		<!-- Footer -->
+			<footer id="footer">
+				<div class="container">
+					<ul class="icons">
+						<li><a href="#" class="icon fa-twitter"><span class="label">Twitter</span></a></li>
+						<li><a href="#" class="icon fa-facebook"><span class="label">Facebook</span></a></li>
+						<li><a href="#" class="icon fa-instagram"><span class="label">Instagram</span></a></li>
+						<li><a href="#" class="icon fa-envelope-o"><span class="label">Email</span></a></li>
+					</ul>
+				</div>
+			</footer>
+
+		<div class="copyright">
+			Made with <a href="https://templated.co/">Templated</a>.
+		</div>
+
+		<!-- Scripts -->
+			<script src="/assets/js/jquery.min.js"></script>
+			<script src="/assets/js/jquery.scrollex.min.js"></script>
+			<script src="/assets/js/skel.min.js"></script>
+			<script src="/assets/js/util.js"></script>
+			<script src="/assets/js/main.js"></script>
+
+	</body>
+</html>

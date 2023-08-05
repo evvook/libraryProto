@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="BookMapper">
+  <select id="retrieveAllBooks" parameterType="hashMap" resultType="com.library.proto.book.domain.Book">
+  	SELECT
+  		 ID
+  		,TITLE
+  		,PUBLISHER
+  	FROM BOOK
+  </select>
+  <select id="retrieveBooks" parameterType="hashMap" resultType="com.library.proto.book.domain.Book">
+	SELECT
+		 ID
+		,TITLE
+		,PUBLISHER
+		,(SELECT GROUP_CONCAT(NAME SEPARATOR ',')
+			FROM AUTHOR 
+		   WHERE BOOK_ID = BOOK.ID
+		     AND TYPE = 'A') AS AUTHOR_NAMES
+		,(SELECT GROUP_CONCAT(NAME SEPARATOR ',')
+			FROM AUTHOR 
+		   WHERE BOOK_ID = BOOK.ID
+		     AND TYPE = 'T') AS TRANSLATOR_NAMES
+		,ISBN10
+		,ISBN13
+		,CONTENTS
+		,THUMBNAIL
+		,PUBLICATION_DATE
+	FROM BOOK BOOK
+	WHERE 1=1
+	<if test='title != null and !title.equals("")'>
+		AND TITLE LIKE CONCAT('%',#{title},'%')
+	</if>
+	<if test='publisher != null and !publisher.equals("")'>
+		AND PUBLISHER LIKE CONCAT('%',#{publisher},'%')
+	</if>
+	<if test='author != null and !author.equals("")'>
+		AND EXISTS(
+			SELECT *
+			FROM AUTHOR
+			WHERE BOOK_ID = BOOk.ID
+			AND NAME LIKE CONCAT('%',#{author},'%')
+		)
+	</if>
+  </select>
+  
+  <select id="retrieveBook" parameterType="hashMap" resultType="com.library.proto.book.domain.Book">
+	SELECT
+		 ID
+		,TITLE
+		,PUBLISHER
+		,(SELECT GROUP_CONCAT(NAME SEPARATOR ',')
+			FROM AUTHOR 
+		   WHERE BOOK_ID = BOOK.ID
+		     AND TYPE = 'A') AS AUTHOR_NAMES
+		,(SELECT GROUP_CONCAT(NAME SEPARATOR ',')
+			FROM AUTHOR 
+		   WHERE BOOK_ID = BOOK.ID
+		     AND TYPE = 'T') AS TRANSLATOR_NAMES
+		,ISBN10
+		,ISBN13
+		,CONTENTS
+		,THUMBNAIL
+		,PUBLICATION_DATE
+	FROM BOOK BOOK
+	WHERE ID = #{book_id}
+  </select>
+  
+  <select id="retrieveAuthor" parameterType="hashMap" resultType="hashMap">
+  	SELECT
+  		 BOOK_ID
+  		,SEQ
+  		,TYPE
+  		,NAME
+  	FROM AUTHOR
+  	WHERE BOOK_ID = #{book_id}
+  	AND SEQ = #{seq}
+  </select>
+  
+  <select id="retrieveBookById" parameterType="hashMap" resultType="hashMap">
+	SELECT
+		 ID
+		,TITLE
+		,PUBLISHER
+		,(SELECT GROUP_CONCAT(NAME SEPARATOR ',')
+			FROM AUTHOR 
+		   WHERE BOOK_ID = BOOK.ID
+		     AND TYPE = 'A') AS AUTHOR_NAMES
+		,(SELECT GROUP_CONCAT(NAME SEPARATOR ',')
+			FROM AUTHOR 
+		   WHERE BOOK_ID = BOOK.ID
+		     AND TYPE = 'T') AS TRANSLATOR_NAMES
+		,ISBN10
+		,ISBN13
+		,CONTENTS
+		,THUMBNAIL
+		,PUBLICATION_DATE
+	FROM BOOK BOOK
+	WHERE ID = #{id}
+  </select>  
+  <select id="retrieveId" parameterType="hashMap" resultType="hashMap">
+	SELECT NVL((SELECT ID 
+				  FROM BOOK 
+				 WHERE 1=1
+			 <choose>
+				 <when test='ISBN10 != null and !ISBN10.equals("")'>
+				   AND ISBN10 = #{ISBN10} 
+				 </when>
+				 <when test='ISBN13 != null and !ISBN13.equals("")'>
+				   AND ISBN13 = #{ISBN13}
+				 </when>
+				 <otherwise>
+				 	AND 1 != 1
+				 </otherwise>
+			 </choose>
+				),(SELECT CONCAT('B', LPAD(COALESCE(SUBSTR(MAX(ID), 2), 0) + 1, 10, '0')) FROM BOOK)) AS ID
+  </select>
+  <select id="getDate" parameterType="hashMap" resultType="hashMap">
+  	SELECT DATE_FORMAT(#{datetime},'%Y%m%d') AS PUBLICATION_DATE
+  </select>  
+  
+  <select id="findAuthorSeq" parameterType="hashMap" resultType="int">
+  	SELECT
+  		SEQ 
+  	FROM AUTHOR
+  	WHERE BOOK_ID = #{book_id}
+  	AND NAME = #{name}
+  </select>
+  
+  <insert id="insertBook" parameterType="com.library.proto.book.domain.Book">
+  	INSERT INTO BOOK(
+	  		ID, 
+	  		TITLE, 
+	  		PUBLISHER, 
+	  		ISBN10, 
+	  		ISBN13, 
+	  		CONTENTS, 
+	  		THUMBNAIL, 
+	  		PUBLICATION_DATE,
+	  		ADD_DATETIME,
+  			MOD_DATETIME
+  		)VALUES(
+  			#{id}, 
+	  		#{title}, 
+	  		#{publisher}, 
+	  		#{isbn10}, 
+	  		#{isbn13}, 
+	  		#{contents}, 
+	  		#{thumbnail}, 
+	  		#{publication_date},
+	  		SYSDATE(),
+  			SYSDATE()
+  		)
+  </insert>
+  
+  <insert id="insertAuthor" parameterType="com.library.proto.book.domain.Author">
+  	INSERT INTO AUTHOR(
+  			BOOK_ID,
+  			SEQ,
+  			TYPE,
+  			NAME,
+  			ADD_DATETIME,
+  			MOD_DATETIME
+  		)VALUES(
+  		  	#{book_id},
+  			#{seq},
+  			#{type},
+  			#{name},
+  			SYSDATE(),
+  			SYSDATE()
+  		)
+  </insert>
+  
+  <update id="updateBook" parameterType="com.library.proto.book.domain.Book">
+  	UPDATE BOOK SET
+  		TITLE = #{title}, 
+  		PUBLISHER = #{publisher}, 
+  		ISBN10 = #{isbn10}, 
+  		ISBN13 = #{isbn13}, 
+  		CONTENTS = #{contents}, 
+  		PUBLICATION_DATE = #{publication_date},
+  		MOD_DATETIME = SYSDATE()
+  	WHERE ID = #{id}
+  </update>
+  
+  <update id="updateAuthor" parameterType="com.library.proto.book.domain.Author">
+  	UPDATE AUTHOR SET
+		TYPE = #{type},
+		NAME = #{name},
+		MOD_DATETIME = SYSDATE()
+  	WHERE BOOK_ID = #{book_id}
+  	AND SEQ = #{seq}
+  </update>
+  
+  <delete id="deleteBook" parameterType="com.library.proto.book.domain.Book">
+  	DELETE FROM BOOK
+  	WHERE ID = #{id}
+  </delete>
+  
+  <delete id="deleteAuthor" parameterType="com.library.proto.book.domain.Author">
+  	DELETE FROM AUTHOR
+  	WHERE BOOK_ID = #{book_id}
+  </delete>
+</mapper>

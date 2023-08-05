@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css" />
+<style>
+	.container{
+		display:flex;
+	}
+	.main{
+		width:100%;
+	}
+	.form{
+		display:flex;
+		flex-direction: column;
+		justify-content: center;
+		height:250px;
+	}
+	.form div{
+		display:flex;
+		justify-content: center;
+		width:100%;
+		margin-bottom:10px;
+	}
+
+	.buttons{
+		display: flex;
+		justify-content: right;
+	}
+
+	.searchBtn{
+		background-color: black;
+		color: white;
+		padding:2px;
+		width:45px;
+		text-align: center;
+	}
+
+	.grid{
+		width:800px;
+		margin:10px;
+	}
+</style>
+
+<script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
+<script type="text/javascript">
+	let grid;
+
+	function load(){
+		drawGrid();
+	}
+
+	function drawGrid(){
+		grid = new tui.Grid({
+		      el: document.querySelector('#grid'),
+		      scrollX: true,
+		      scrollY: true,
+			  bodyHeight:500,
+		      columns: [
+		        {
+		          header: '도서ID',
+		          name: 'id',
+		        },
+		        {
+		          header: '도서명',
+		          name: 'title',
+		        },
+		        {
+		          header: '저자',
+		          name: 'author_names',
+		        },
+				{
+		          header: '출판사',
+		          name: 'publisher',
+		        },
+		      ]
+		    });
+
+		grid.on('dblclick', (ev)=>{
+			if(ev.rowKey != undefined){
+				let row = grid.getRow(ev.rowKey);
+				location.href = "/admin/detail.html?book_id="+row.id;
+			}
+		});
+	}
+
+	function loadGrid(data){
+		let gridData = new Array();
+		for(idx in data){
+			let rowData = data[idx].info;
+			let author_names = "";
+			for(aIdx in rowData.authors){
+				author_names += author_names.length>0?rowData.authors[aIdx].name+",":rowData.authors[aIdx].name;
+			}
+			rowData.author_names = author_names;
+			gridData.push(rowData);
+		}
+		grid.resetData(gridData);
+	}
+
+	function ajaxRequest(url,inputs,callback){
+		
+		var reqJson = inputs;
+		/* 통신에 사용 될 XMLHttpRequest 객체 정의 */
+		httpRequest = new XMLHttpRequest();
+		httpRequest.onreadystatechange = () => {
+	    	/* readyState가 Done이고 응답 값이 200일 때, 받아온 response로 처리*/
+		    if (httpRequest.readyState === XMLHttpRequest.DONE) {
+			      if (httpRequest.status === 200) {
+			    	var result = httpRequest.response;
+			    	callback(result);
+			      } else {
+			        alert('request에 뭔가 문제가 있어요.');
+			      }
+			}
+	    };
+	    
+	    /* Post 방식으로 요청 */
+	    httpRequest.open('POST', url, true);//경로 잡아줌
+	    /* Response Type을 Json으로 사전 정의 */
+	    httpRequest.responseType = "json";
+	    /* 요청 Header에 컨텐츠 타입은 Json으로 사전 정의 */
+	    httpRequest.setRequestHeader('Content-Type', 'application/json');
+	    /* 정의된 서버에 Json 형식의 요청 Data를 포함하여 요청을 전송 */
+	    httpRequest.send(JSON.stringify(reqJson));
+	}
+
+	function search(){
+		ajaxRequest("/searchBookList",{},loadGrid);
+	}
+
+	function excelUploadAjax(){
+		var file = document.querySelector("#inputExcelFile");
+		var fileData = new FormData();
+		
+		fileData.append("uploadfile",file.files[0]);
+		
+		/* 통신에 사용 될 XMLHttpRequest 객체 정의 */
+		httpRequest = new XMLHttpRequest();
+		httpRequest.onreadystatechange = () => {
+	    	/* readyState가 Done이고 응답 값이 200일 때, 받아온 response로 처리*/
+		    if (httpRequest.readyState === XMLHttpRequest.DONE) {
+			      if (httpRequest.status === 200) {
+			    	alert("Uploaded");
+					search();
+			      } else {
+			        alert('request에 뭔가 문제가 있어요.');
+			      }
+			}
+	    };
+	    
+	    /* Post 방식으로 요청 */
+	    httpRequest.open('POST', '/excelUpload', true);//경로 잡아줌
+	    /* Response Type을 Json으로 사전 정의 */
+	    httpRequest.responseType = "json";
+	    /* 정의된 서버에 Json 형식의 요청 Data를 포함하여 요청을 전송 */
+	    httpRequest.send(fileData);
+	}
+
+</script>
+<body onload="load()">
+	<div class="container">
+		<div class="main">
+			<div class="buttons">
+				<div class="searchBtn" id="searchBtn" onclick="search()">검색</div>
+			</div>
+			<div class="form">
+			
+			</div>
+			<div style="border:1px solid #222; margin: 10px;">
+				<form id="form" method="post" enctype="multipart/form-data">
+					<div style="padding:10px;">
+						<div>
+							<input type="file" id="inputExcelFile" name="inputExcelFile"/>
+							<button type="button" id="uploadBtn" onclick="excelUploadAjax()">업로드</button>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="grid" id="grid">
+	
+			</div>
+		</div>
+	</div>
+</body>
+</html>

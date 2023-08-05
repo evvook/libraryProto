@@ -1,0 +1,243 @@
+<!DOCTYPE HTML>
+<!--
+	Hielo by TEMPLATED
+	templated.co @templatedco
+	Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+-->
+<html>
+	<head>
+		<title>Hielo by TEMPLATED</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" href="/assets/css/main.css" />
+		<link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css" />
+	</head>
+	
+	<script type="text/javascript">
+
+		function load(){
+			
+		}
+
+		function loadList(data){
+			let listData = new Array();
+			for(idx in data){
+				let rowData = data[idx].info;
+				let author_names = "";
+				for(aIdx in rowData.authors){
+					author_names += author_names.length>0?", "+rowData.authors[aIdx].name:rowData.authors[aIdx].name;
+				}
+				rowData.author_names = author_names;
+				listData.push(rowData);
+			}
+			
+			let ul = document.querySelector("ul");
+			while(ul.firstChild){
+				ul.removeChild(ul.lastChild)
+			}
+
+			if(listData.length == 0){
+				let noDataSpan = document.createElement("span");
+					noDataSpan.textContent = "No Data";
+
+				let noDataDiv = document.createElement("div");
+					noDataDiv.style = "display:flex; justify-content:center; align-items: center; height:100px;";
+					noDataDiv.appendChild(noDataSpan);
+
+				let hr = document.createElement("hr");
+
+				let li = document.createElement("li");
+					li.appendChild(noDataDiv)
+					li.appendChild(hr);
+
+				let ul = document.querySelector("ul");
+					ul.appendChild(li);
+			}else{
+				for(idx in listData){
+	
+					//이미지
+					let thumbnail = document.createElement("img");
+						thumbnail.src = listData[idx]["thumbnail"];
+					let thumbnailSpan = document.createElement("span");
+						thumbnailSpan.className = "image right";
+						thumbnailSpan.appendChild(thumbnail);
+					let thumbnailWrapper = document.createElement("div");
+						thumbnailWrapper.className = "3u 12u$(medium)";
+						thumbnailWrapper.appendChild(thumbnailSpan);
+		
+					//도서정보
+					let title = document.createElement("h3");
+						title.textContent = listData[idx]["title"];
+						title.style = "cursor:pointer;";
+						title.onclick = moveTo;
+						title["data-id"] = listData[idx]["id"];
+					let titleSpan = document.createElement("span");
+						titleSpan.appendChild(title);
+					let line1 = document.createElement("p");
+						line1.textContent = "저자명 : "+listData[idx]["author_names"];
+					let line1Span = document.createElement("span");
+						line1Span.appendChild(line1);
+					let line2 = document.createElement("p");
+						line2.textContent = "발행자 : "+listData[idx]["publisher"]+", "+String(listData[idx]["publication_date"]).substring(0,4);
+					let line2Span = document.createElement("span");
+						line2Span.appendChild(line2);
+					let bookInfoDiv = document.createElement("div");
+						bookInfoDiv.className = "row uniform";
+						bookInfoDiv.style = "display:flex;flex-direction:column;";
+						bookInfoDiv.appendChild(titleSpan);
+						bookInfoDiv.appendChild(line1Span);
+						bookInfoDiv.appendChild(line2Span);
+					let bookInfoWrapper = document.createElement("div");
+						bookInfoWrapper.className = "9u$ 12u$(medium)";
+						bookInfoWrapper.appendChild(bookInfoDiv);
+		
+					//컨테이너
+					let row = document.createElement("div");
+						row.className = "row";
+						row.style = "display:flex;";
+						row.appendChild(thumbnailWrapper);
+						row.appendChild(bookInfoWrapper);
+					let hr = document.createElement("hr");
+					let box = document.createElement("div")
+						box.className = "box";
+						box.appendChild(row);
+						box.appendChild(hr);
+					let li = document.createElement("li");
+						li.id = listData[idx]["id"];
+						li.appendChild(box)
+		
+					let ul = document.querySelector("ul");
+						ul.appendChild(li);
+				}
+			}
+
+
+		}
+
+		function moveTo(ev){
+			location.href = "./bookInfo.html?book_id="+ev.target["data-id"];
+		}
+
+		function ajaxRequest(url,inputs,callback){
+			
+			var reqJson = inputs;
+			/* 통신에 사용 될 XMLHttpRequest 객체 정의 */
+			httpRequest = new XMLHttpRequest();
+			httpRequest.onreadystatechange = () => {
+				/* readyState가 Done이고 응답 값이 200일 때, 받아온 response로 처리*/
+				if (httpRequest.readyState === XMLHttpRequest.DONE) {
+					if (httpRequest.status === 200) {
+						var result = httpRequest.response;
+						callback(result);
+					} else {
+						alert('request에 뭔가 문제가 있어요.');
+					}
+				}
+			};
+			
+			/* Post 방식으로 요청 */
+			httpRequest.open('POST', url, true);//경로 잡아줌
+			/* Response Type을 Json으로 사전 정의 */
+			httpRequest.responseType = "json";
+			/* 요청 Header에 컨텐츠 타입은 Json으로 사전 정의 */
+			httpRequest.setRequestHeader('Content-Type', 'application/json');
+			/* 정의된 서버에 Json 형식의 요청 Data를 포함하여 요청을 전송 */
+			httpRequest.send(JSON.stringify(reqJson));
+		}
+
+		function search(){
+			let param = {
+				query:document.querySelector("#query").value,
+			}
+			ajaxRequest("/searchBookByQuery",param,loadList);
+		}
+
+	</script>
+	<body class="subpage" onload="load()">
+
+		<!-- Header -->
+			<header id="header">
+				<div class="logo"><a href="/index.html">Hielo <span>by TEMPLATED</span></a></div>
+				<a href="#menu">Menu</a>
+			</header>
+
+		<!-- Nav -->
+			<nav id="menu">
+				<ul class="links">
+					<li><a href="/index.html">Home</a></li>
+					<li><a href="/generic.html">Generic</a></li>
+					<li><a href="/elements.html">Elements</a></li>
+				</ul>
+			</nav>
+
+		<!-- One -->
+			<section id="One" class="wrapper style3">
+				<div class="inner">
+					<header class="align-center">
+						<p>Eleifend vitae urna</p>
+						<h2>Generic Page Template</h2>
+					</header>
+				</div>
+			</section>
+
+		<!-- Two -->
+			<section id="two" class="wrapper style2">
+				<div class="inner">
+					<div class="box">
+						<div class="content">
+							<div class="row uniform" style="display: flex; justify-content: center;">
+								<div class="9u">
+									<div class="row">
+										<div class="9u 12u$(small)">
+											<input type="text" name="query" id="query" value="" placeholder="Query" />
+										</div>
+										<div class="3u$ 12u$(small)">
+											<input type="button" value="Search" class="fit alt" onclick="search()"/>
+										</div>
+									</div>
+								</div>
+							</div>
+							<hr />
+							<div class="row uniform">
+								<div class="12u">
+									<ul style="list-style: none;">
+										<li>
+											<div style="display:flex; justify-content:center; align-items: center; height:100px;">
+												<span>No Data</span>
+											</div>
+											<hr>
+										</li>
+									</ul>
+								</div>
+							</div>	
+						</div>
+					</div>
+				</div>
+			</section>
+
+		<!-- Footer -->
+			<footer id="footer">
+				<div class="container">
+					<ul class="icons">
+						<li><a href="#" class="icon fa-twitter"><span class="label">Twitter</span></a></li>
+						<li><a href="#" class="icon fa-facebook"><span class="label">Facebook</span></a></li>
+						<li><a href="#" class="icon fa-instagram"><span class="label">Instagram</span></a></li>
+						<li><a href="#" class="icon fa-envelope-o"><span class="label">Email</span></a></li>
+					</ul>
+				</div>
+			</footer>
+
+		<div class="copyright">
+			Made with <a href="https://templated.co/">Templated</a>.
+		</div>
+
+		<!-- Scripts -->
+			<script src="/assets/js/jquery.min.js"></script>
+			<script src="/assets/js/jquery.scrollex.min.js"></script>
+			<script src="/assets/js/skel.min.js"></script>
+			<script src="/assets/js/util.js"></script>
+			<script src="/assets/js/main.js"></script>
+			<script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
+
+	</body>
+</html>
