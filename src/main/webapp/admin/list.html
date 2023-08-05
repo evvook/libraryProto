@@ -41,7 +41,7 @@
 					{
 					header: '저자',
 					name: 'author_names',
-					width:'auto',
+					width:100,
 					},
 					{
 					header: '출판사',
@@ -77,7 +77,7 @@
 		function loadGrid(data){
 			let gridData = new Array();
 			for(idx in data){
-				let rowData = data[idx].info;
+				let rowData = data[idx];
 				let author_names = "";
 				for(aIdx in rowData.authors){
 					author_names += author_names.length>0?", "+rowData.authors[aIdx].name:rowData.authors[aIdx].name;

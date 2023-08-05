@@ -1,4 +1,4 @@
-package com.library.proto.book.infra;
+package com.library.proto.book.adapter.out.persistence;
 
 import java.util.List;
 import java.util.Map;
@@ -7,9 +7,9 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.library.proto.book.application.port.out.BookRepository;
 import com.library.proto.book.domain.Author;
 import com.library.proto.book.domain.Book;
-import com.library.proto.book.domain.BookRepository;
 
 @Repository
 public class MybatisBookRepository implements BookRepository{

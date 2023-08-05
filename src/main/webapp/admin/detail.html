@@ -70,15 +70,15 @@
 			let contents = document.querySelector("#contents");
 			let author = document.querySelector("#author");
 			
-			thumbnail.src = result.info.thumbnail;
-			title.value = result.info.title;
-			id.value = result.info.id;
-			publisher.value = result.info.publisher;
-			isbn10.value = result.info.isbn10;
-			isbn13.value = result.info.isbn13;
-			publication_date.value = result.info.publication_date;
-			contents.value = result.info.contents;
-			author.value = result.info.authors[0].name;
+			thumbnail.src = result.thumbnail;
+			title.value = result.title;
+			id.value = result.id;
+			publisher.value = result.publisher;
+			isbn10.value = result.isbn10;
+			isbn13.value = result.isbn13;
+			publication_date.value = result.publication_date;
+			contents.value = result.contents;
+			author.value = result.authors[0].name;
 		}
 
 		function save(){

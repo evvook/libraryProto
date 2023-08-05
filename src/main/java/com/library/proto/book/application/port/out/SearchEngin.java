@@ -1,13 +1,15 @@
-package com.library.proto.book.domain;
+package com.library.proto.book.application.port.out;
 
 import java.util.List;
 import java.util.Map;
+
+import com.library.proto.book.domain.Book;
 
 public interface SearchEngin {
 	List<String> searchId(String query);
 
 	boolean isDocumentExists(String id);
-	void createDocument(Map<String, Object> bookInfo);
-	public void updateDocument(Map<String,Object> bookInfo);
+	void createDocument(Book book);
+	public void updateDocument(Book book);
 	public void deleteDocument(String id);
 }

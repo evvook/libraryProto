@@ -1,4 +1,4 @@
-package com.library.proto.book.infra;
+package com.library.proto.book.adapter.out.api;
 
 import java.util.Map;
 
@@ -7,7 +7,7 @@ import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import com.library.proto.book.application.WebClientService;
+import com.library.proto.book.application.port.out.WebClientService;
 
 import reactor.netty.http.client.HttpClient;
 import reactor.netty.resources.ConnectionProvider;

@@ -1,4 +1,4 @@
-package com.library.proto.book.application;
+package com.library.proto.book.application.port.out;
 
 import java.util.Map;
 

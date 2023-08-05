@@ -3,61 +3,23 @@ package com.library.proto.book.domain;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.library.proto.book.application.port.out.BookRepository;
+
+import lombok.Getter;
+
+@Getter
 public class Author {
 	private String book_id;
 	private int seq;
 	private String type;
 	private String name;
 	
-	private BookRepository bookRepository;
-	
-	public Author(BookRepository bookRepository, String bookId, int seq, String type, String name) {
-		// TODO Auto-generated constructor stub
-		this.book_id = bookId;
-		this.seq = seq;
-		this.type = type;
-		this.name = name;
-		
-		this.bookRepository = bookRepository;
-	}
 	public Author(String bookId, int seq, String type, String name) {
 		// TODO Auto-generated constructor stub
 		this.book_id = bookId;
 		this.seq = seq;
 		this.type = type;
 		this.name = name;
-	}
-
-	public int save() {
-		Map<String,String> author = bookRepository.findAuthorById(getInfo());
-		if(author == null) {
-			return bookRepository.createAuthor(this);
-		}else {
-			return bookRepository.updateAuthor(this);
-		}
-	}
-	
-	public int delete() {
-		return bookRepository.deleteAuthor(this);
-	}
-
-	public String getName() {
-		// TODO Auto-generated method stub
-		return this.name;
-	}
-	
-	public String getType() {
-		return this.type;
-	}
-	
-	public Map<String,Object> getInfo(){
-		Map<String,Object> info = new HashMap<String,Object>();
-		info.put("book_id", book_id);
-		info.put("seq", seq);
-		info.put("type", type);
-		info.put("name", name);
-		
-		return info;
 	}
 	
 	public static AuthorBuilder builder() {
@@ -108,7 +70,7 @@ public class Author {
 				authorMap.put("name", name);
 				seq = bookRepository.findAuthorSeq(authorMap);
 			}
-			return new Author(bookRepository, book_id, seq, type, name);
+			return new Author(book_id, seq, type, name);
 		}
 	}
 }

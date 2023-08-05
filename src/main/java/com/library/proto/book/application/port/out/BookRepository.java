@@ -1,7 +1,10 @@
-package com.library.proto.book.domain;
+package com.library.proto.book.application.port.out;
 
 import java.util.List;
 import java.util.Map;
+
+import com.library.proto.book.domain.Author;
+import com.library.proto.book.domain.Book;
 
 public interface BookRepository {
 

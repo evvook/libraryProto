@@ -101,7 +101,7 @@
 	WHERE ID = #{id}
   </select>  
   <select id="retrieveId" parameterType="hashMap" resultType="hashMap">
-	SELECT NVL((SELECT ID 
+	SELECT NVL((SELECT CASE WHEN ID = '' THEN NULL ELSE ID END
 				  FROM BOOK 
 				 WHERE 1=1
 			 <choose>

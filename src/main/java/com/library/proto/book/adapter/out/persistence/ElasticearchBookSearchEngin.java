@@ -1,4 +1,4 @@
-package com.library.proto.book.infra;
+package com.library.proto.book.adapter.out.persistence;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,7 +29,8 @@ import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.stereotype.Component;
 
-import com.library.proto.book.domain.SearchEngin;
+import com.library.proto.book.application.port.out.SearchEngin;
+import com.library.proto.book.domain.Book;
 
 @Component
 public class ElasticearchBookSearchEngin implements SearchEngin{
@@ -91,20 +92,20 @@ public class ElasticearchBookSearchEngin implements SearchEngin{
 		return result;
 	}
 	
-	public void createDocument(Map<String,Object> bookInfo) {
+	public void createDocument(Book book) {
 		HttpHost host = new HttpHost(hostname, port, scheme);
 		
 		RestHighLevelClient client = new RestHighLevelClient(RestClient.builder(host).setDefaultHeaders(compatibilityHeaders()));
 		
-		IndexRequest request = new IndexRequest(indexName).id((String)bookInfo.get("id"));
+		IndexRequest request = new IndexRequest(indexName).id(book.getId());
 		
 		try {
 			XContentBuilder builder = XContentFactory.jsonBuilder()
 														.startObject()
-															.field("id",bookInfo.get("id"))
-															.field("title",bookInfo.get("title"))
-															.field("authors",bookInfo.get("author_names"))
-															.field("publisher",bookInfo.get("publisher"))
+															.field("id",book.getId())
+															.field("title",book.getTitle())
+															.field("authors",book.getAuthorNames())
+															.field("publisher",book.getPublisher())
 														.endObject();
 			request.source(builder);
 			IndexResponse response = client.index(request, RequestOptions.DEFAULT);
@@ -122,7 +123,7 @@ public class ElasticearchBookSearchEngin implements SearchEngin{
 		}
 	}
 	
-	public void updateDocument(Map<String,Object> bookInfo) {
+	public void updateDocument(Book book) {
 		HttpHost host = new HttpHost(hostname, port, scheme);
 		
 		RestHighLevelClient client = new RestHighLevelClient(RestClient.builder(host).setDefaultHeaders(compatibilityHeaders()));
@@ -130,12 +131,12 @@ public class ElasticearchBookSearchEngin implements SearchEngin{
 		try {
 			XContentBuilder builder = XContentFactory.jsonBuilder()
 					.startObject()
-					.field("id",bookInfo.get("id"))
-					.field("title",bookInfo.get("title"))
-					.field("authors",bookInfo.get("author_names"))
-					.field("publisher",bookInfo.get("publisher"))
+					.field("id",book.getId())
+					.field("title",book.getTitle())
+					.field("authors",book.getAuthorNames())
+					.field("publisher",book.getPublisher())
 					.endObject();
-			UpdateRequest request = new UpdateRequest().index(indexName).id((String)bookInfo.get("id")).doc(builder);
+			UpdateRequest request = new UpdateRequest().index(indexName).id(book.getId()).doc(builder);
 			UpdateResponse response = client.update(request, RequestOptions.DEFAULT);
 			System.out.println(response.status());
 		} catch (IOException e) {

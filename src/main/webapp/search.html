@@ -22,7 +22,7 @@
 		function loadList(data){
 			let listData = new Array();
 			for(idx in data){
-				let rowData = data[idx].info;
+				let rowData = data[idx];
 				let author_names = "";
 				for(aIdx in rowData.authors){
 					author_names += author_names.length>0?", "+rowData.authors[aIdx].name:rowData.authors[aIdx].name;

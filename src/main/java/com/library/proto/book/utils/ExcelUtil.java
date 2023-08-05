@@ -1,4 +1,4 @@
-package com.library.proto.book.infra;
+package com.library.proto.book.utils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,7 +16,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 //https://sowon-dev.github.io/2021/08/09/210810Spring-excel/
-@Component
 public class ExcelUtil {
 	
 	// 각 셀의 데이터타입에 맞게 값 가져오기

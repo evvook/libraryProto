@@ -70,20 +70,20 @@
 			let contents = document.querySelector("#contents");
 			let author = document.querySelector("#author");
 			
-			thumbnail.src = result.info.thumbnail;
-			title.textContent = result.info.title;
-			let publication_date = result.info.publication_date;
-			publisher.textContent = "출판사 : "+result.info.publisher + ", 발행일자 : " + (publication_date.substring(0,4)+"."+publication_date.substring(4,6)+"."+publication_date.substring(6,8));
-			isbn.textContent = "ISBN : "+(result.info.isbn10?result.info.isbn10:result.info.isbn13)+((result.info.isbn10 && result.info.isbn13)?" / "+result.info.isbn13:"");
-			contents.textContent = result.info.contents;
+			thumbnail.src = result.thumbnail;
+			title.textContent = result.title;
+			let publication_date = result.publication_date;
+			publisher.textContent = "출판사 : "+result.publisher + ", 발행일자 : " + (publication_date.substring(0,4)+"."+publication_date.substring(4,6)+"."+publication_date.substring(6,8));
+			isbn.textContent = "ISBN : "+(result.isbn10?result.isbn10:result.isbn13)+((result.isbn10 && result.isbn13)?" / "+result.isbn13:"");
+			contents.textContent = result.contents;
 			let author_names = "";
 			let translator_names = "";
-			for(idx in result.info.authors){
-				let author = result.info.authors[idx];
-				if(author.info.type == "A"){
-					author_names += author_names.length==0?author.info.name:", "+author.info.name;
-				}else if(author.info.type == "T"){
-					translator_names += translator_names.length==0?author.info.name:", "+author.info.name;
+			for(idx in result.authors){
+				let author = result.authors[idx];
+				if(author.type == "A"){
+					author_names += author_names.length==0?author.name:", "+author.name;
+				}else if(author.type == "T"){
+					translator_names += translator_names.length==0?author.name:", "+author.name;
 				}
 			}
 			author.textContent = "저자 : "+author_names+(translator_names!=0?", 역자 : "+translator_names:"");

@@ -7,9 +7,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.library.proto.book.adapter.out.api.WebClientServiceImpl;
+import com.library.proto.book.application.port.out.BookRepository;
 import com.library.proto.book.domain.Book;
-import com.library.proto.book.domain.BookRepository;
-import com.library.proto.book.infra.WebClientServiceImpl;
 
 @SpringBootTest
 public class WebClientApplicationTest {
