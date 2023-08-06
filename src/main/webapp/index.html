@@ -11,6 +11,11 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="stylesheet" href="assets/css/main.css" />
 	</head>
+	<script type="text/javascript">
+		function search(){
+			location.href = "./search.html?query="+document.querySelector("#query").value;
+		}
+	</script>
 	<body>
 
 		<!-- Header -->
@@ -23,55 +28,26 @@
 			<nav id="menu">
 				<ul class="links">
 					<li><a href="index.html">Home</a></li>
-					<li><a href="generic.html">Generic</a></li>
-					<li><a href="elements.html">Elements</a></li>
+					<li><a href="search.html">Search</a></li>
+					<li><a href="admin/list.html">Admin</a></li>
 				</ul>
 			</nav>
 
 		<!-- Banner -->
 			<section class="banner full">
 				<article>
-					<img src="images/slide01.jpg" alt="" />
+					<img src="images/book16_9.png" alt="" />
 					<div class="inner">
 						<header>
 							<p>A free responsive web site template by <a href="https://templated.co">TEMPLATED</a></p>
-							<h2>Hielo</h2>
-						</header>
-					</div>
-				</article>
-				<article>
-					<img src="images/slide02.jpg" alt="" />
-					<div class="inner">
-						<header>
-							<p>Lorem ipsum dolor sit amet nullam feugiat</p>
-							<h2>Magna</h2>
-						</header>
-					</div>
-				</article>
-				<article>
-					<img src="images/slide03.jpg"  alt="" />
-					<div class="inner">
-						<header>
-							<p>Sed cursus aliuam veroeros lorem ipsum nullam</p>
-							<h2>Tempus</h2>
-						</header>
-					</div>
-				</article>
-				<article>
-					<img src="images/slide04.jpg"  alt="" />
-					<div class="inner">
-						<header>
-							<p>Adipiscing lorem ipsum feugiat sed phasellus consequat</p>
-							<h2>Etiam</h2>
-						</header>
-					</div>
-				</article>
-				<article>
-					<img src="images/slide05.jpg"  alt="" />
-					<div class="inner">
-						<header>
-							<p>Ipsum dolor sed magna veroeros lorem ipsum</p>
-							<h2>Adipiscing</h2>
+							<div class="12u" style="display:flex; margin-top:50px;">
+								<div class="9u 12u$">
+									<input type="text" id="query">
+								</div>
+								<div class="3u$ 12u$">
+									<input type="button" value="Search" class="fit" onclick="search()"/>
+								</div>
+							</div>
 						</header>
 					</div>
 				</article>

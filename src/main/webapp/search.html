@@ -14,9 +14,25 @@
 	</head>
 	
 	<script type="text/javascript">
+		function getParams(){
+			var url = window.location.search.replace('?','');
+			var params = {};
+			var urlArray = url.split('&');
+		
+			for(var i in urlArray)
+			{
+			  var param = urlArray[i].split('=');
+			  params[param[0]] = param[1]; 
+			}
+			return params;
+		}
 
 		function load(){
-			
+			let params = getParams()
+			if(params.query){
+				document.querySelector("#query").value = decodeURI(params.query);
+				search();
+			}
 		}
 
 		function loadList(data){
@@ -165,8 +181,8 @@
 			<nav id="menu">
 				<ul class="links">
 					<li><a href="/index.html">Home</a></li>
-					<li><a href="/generic.html">Generic</a></li>
-					<li><a href="/elements.html">Elements</a></li>
+					<li><a href="/search.html">Search</a></li>
+					<li><a href="/admin/list.html">Admin</a></li>
 				</ul>
 			</nav>
 
