@@ -23,6 +23,10 @@ import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
+import org.elasticsearch.common.xcontent.XContentParser;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.Operator;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
@@ -34,10 +38,10 @@ import com.library.proto.book.domain.Book;
 
 @Component
 public class ElasticearchBookSearchEngin implements SearchEngin{
-	String hostname = "localhost";
+	String hostname = "13.210.129.145";
 	int port = 9200;
 	String scheme = "http";
-	String indexName = "test_table_data";
+	String indexName = "library_data";
 	
 	public List<String> searchId(String query) {
 		List<String> idList = new ArrayList<String>();
@@ -47,7 +51,10 @@ public class ElasticearchBookSearchEngin implements SearchEngin{
 		RestHighLevelClient client = new RestHighLevelClient(RestClient.builder(host));
 		
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-		searchSourceBuilder.query(QueryBuilders.multiMatchQuery(query, "authors","title","publisher"));
+		//searchSourceBuilder.query(QueryBuilders.multiMatchQuery(query, "title.nori_mixed","authors.nori_mixed","publisher.nori_mixed"));
+		searchSourceBuilder.query(QueryBuilders.disMaxQuery().add(QueryBuilders.matchQuery("title.nori_mixed", query).boost(2))
+																.add(QueryBuilders.matchQuery("authors.nori_mixed", query))
+																.add(QueryBuilders.matchQuery("publisher.nori_mixed", query)));
 		searchSourceBuilder.from(0);
 		searchSourceBuilder.size(100);
 		
